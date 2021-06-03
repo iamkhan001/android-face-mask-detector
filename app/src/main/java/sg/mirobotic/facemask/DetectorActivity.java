@@ -28,12 +28,15 @@ import android.graphics.Typeface;
 import android.hardware.camera2.CameraCharacteristics;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
+import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
@@ -48,6 +51,7 @@ import sg.mirobotic.facemask.env.Logger;
 import sg.mirobotic.facemask.tflite.Classifier;
 import sg.mirobotic.facemask.tflite.TFLiteObjectDetectionAPIModel;
 import sg.mirobotic.facemask.tracking.MultiBoxTracker;
+import sg.mirobotic.robot.voice.RobotSpeech;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -59,6 +63,8 @@ import java.util.List;
  */
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
+
+  private static final String TAG = "Detector";
 
   // Configuration values for the prepackaged SSD model.
   //private static final int TF_OD_API_INPUT_SIZE = 300;
@@ -82,8 +88,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final Size DESIRED_PREVIEW_SIZE = new Size(800, 600);
   //private static final int CROP_SIZE = 320;
   //private static final Size CROP_SIZE = new Size(320, 320);
-
-
 
   private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
@@ -116,6 +120,42 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   // here the face is cropped and drawn
   private Bitmap faceBmp = null;
 
+  private RobotSpeech robotSpeech;
+
+  private boolean isSpeaking = false;
+  private boolean isReady = true;
+
+  private final TimeOutUtils.OnTimeoutListener timeoutListener = () -> {
+      Log.e(TAG,"Timeout");
+      isSpeaking = false;
+      resetTimer();
+  };
+
+  private void resetTimer() {
+    timeOutUtils.resetDisconnectTimer();
+  }
+
+  private final TimeOutUtils timeOutUtils = new TimeOutUtils(timeoutListener);
+
+  private final UtteranceProgressListener onSpeakListener = new UtteranceProgressListener() {
+
+    @Override
+    public void onStart(String utteranceId) {
+      timeOutUtils.stopDisconnectTimer();
+    }
+
+    @Override
+    public void onDone(String utteranceId) {
+      timeOutUtils.resetDisconnectTimer();
+    }
+
+    @Override
+    public void onError(String utteranceId) {
+      timeOutUtils.resetDisconnectTimer();
+    }
+
+  };
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -135,25 +175,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     faceDetector = detector;
 
-
+    robotSpeech = RobotSpeech.getInstance(this, onSpeakListener);
     //checkWritePermission();
-
+    timeOutUtils.resetDisconnectTimer();
   }
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
-    final float textSizePx =
-            TypedValue.applyDimension(
+    final float textSizePx = TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
-    borderedText.setTypeface(Typeface.MONOSPACE);
+                    borderedText = new BorderedText(textSizePx);
+                    borderedText.setTypeface(Typeface.MONOSPACE);
 
     tracker = new MultiBoxTracker(this);
 
 
     try {
-      detector =
-              TFLiteObjectDetectionAPIModel.create(
+      detector = TFLiteObjectDetectionAPIModel.create(
                       getAssets(),
                       TF_OD_API_MODEL_FILE,
                       TF_OD_API_LABELS_FILE,
@@ -179,9 +217,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
     rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-
-
-
 
     int targetW, targetH;
     if (sensorOrientation == 90 || sensorOrientation == 270) {
@@ -261,22 +296,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     InputImage image = InputImage.fromBitmap(croppedBitmap, 0);
     faceDetector
             .process(image)
-            .addOnSuccessListener(new OnSuccessListener<List<Face>>() {
-              @Override
-              public void onSuccess(List<Face> faces) {
-                if (faces.size() == 0) {
-                  updateResults(currTimestamp, new LinkedList<>());
-                  return;
-                }
-                runInBackground(
-                        new Runnable() {
-                          @Override
-                          public void run() {
-                            onFacesDetected(currTimestamp, faces);
-                          }
-                        });
+            .addOnSuccessListener(faces -> {
+              if (faces.size() == 0) {
+                isSpeaking = false;
+                updateResults(currTimestamp, new LinkedList<>());
+                return;
               }
-
+              runInBackground(
+                      () -> onFacesDetected(currTimestamp, faces));
             });
 
 
@@ -355,13 +382,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
 
     runOnUiThread(
-            new Runnable() {
-              @Override
-              public void run() {
-                showFrameInfo(previewWidth + "x" + previewHeight);
-                showCropInfo(croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
-                showInference(lastProcessingTimeMs + "ms");
-              }
+            () -> {
+              showFrameInfo(previewWidth + "x" + previewHeight);
+              showCropInfo(croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
+              showInference(lastProcessingTimeMs + "ms");
             });
 
   }
@@ -374,6 +398,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     paint.setColor(Color.RED);
     paint.setStyle(Style.STROKE);
     paint.setStrokeWidth(2.0f);
+
+    Log.e(TAG, "Faces > "+faces.size());
 
     float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
     switch (MODE) {
@@ -407,6 +433,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     final Canvas cvFace = new Canvas(faceBmp);
 
     boolean saved = false;
+
+    boolean multiFaces = faces.size() > 1;
+    boolean hasMask = true;
 
     for (Face face : faces) {
 
@@ -458,10 +487,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             confidence = conf;
             label = result.getTitle();
+
             if (result.getId().equals("0")) {
               color = Color.GREEN;
             }
             else {
+              hasMask = false;
               color = Color.RED;
             }
           }
@@ -494,8 +525,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
       }
 
-
     }
+
+    alertVisitors(multiFaces, hasMask);
 
     //    if (saved) {
 //      lastSaved = System.currentTimeMillis();
@@ -503,8 +535,38 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     updateResults(currTimestamp, mappedRecognitions);
 
-
   }
 
+  private Handler handler = new Handler(Looper.getMainLooper());
+
+  private void alertVisitors(boolean multiFaces, boolean hasMask) {
+
+    if (isSpeaking) {
+      Log.e(TAG,"ALREADY SPEAKING!");
+      return;
+    }
+
+    isSpeaking = true;
+    isReady = true;
+
+    String message;
+
+    if (multiFaces) {
+        if (hasMask) {
+          message = "Please maintain social distance";
+        }else {
+          message = "Please ware mask and maintain social distance";
+        }
+    }else {
+        if (hasMask) {
+          return;
+        }else {
+          message = "Please ware mask";
+        }
+    }
+    Log.d(TAG,"SPEAK >> "+message);
+    handler.postDelayed(() -> robotSpeech.speak(message), 500);
+
+  }
 
 }

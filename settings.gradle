@@ -1,2 +1,3 @@
 rootProject.name = "Face Mask"
 include ':app'
+include ':robot'

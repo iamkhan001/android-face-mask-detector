@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">CSJSdk</string>
+
+    <string-array name="wakeup_words">
+        <item>hey snow</item>
+        <item>hi snow</item>
+        <item>hey amy</item>
+        <item>hi amy</item>
+        <item>hello</item>
+    </string-array>
+
+    <string name="no_location">No Location Found!</string>
+
+    <string name="latitude_label">Latitude: %f</string>
+    <string name="longitude_label">Longitude: %f</string>
+    <string name="no_location_detected">
+        No location detected. Make sure location is enabled on the device.
+    </string>
+    <string name="permission_denied_explanation">
+        Permission was denied, but is needed for core functionality.
+    </string>
+    <string name="permission_rationale">
+        Location permission is needed for core functionality
+    </string>
+    <string name="settings">Settings</string>
+    <string name="hello">hello</string>
+
+
+</resources>
