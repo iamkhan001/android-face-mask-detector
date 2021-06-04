@@ -18,6 +18,7 @@ package sg.mirobotic.facemask.customview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.TextureView;
 
 /** A {@link TextureView} that can be adjusted to a specified aspect ratio. */
@@ -59,14 +60,21 @@ public class AutoFitTextureView extends TextureView {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     final int width = MeasureSpec.getSize(widthMeasureSpec);
     final int height = MeasureSpec.getSize(heightMeasureSpec);
+
     if (0 == ratioWidth || 0 == ratioHeight) {
       setMeasuredDimension(width, height);
     } else {
-      if (width < height * ratioWidth / ratioHeight) {
+      final int ratio = height * ratioWidth / ratioHeight;
+      Log.e("Camera", "ratio > "+ratio+" < "+ratio);
+
+      if (width < ratio) {
         setMeasuredDimension(width, width * ratioHeight / ratioWidth);
       } else {
         setMeasuredDimension(height * ratioWidth / ratioHeight, height);
       }
     }
+
+    Log.e("Camera", "ratio > "+ratioWidth+" "+ratioHeight+" > "+width+" "+height);
+    setRotation(270);
   }
 }
