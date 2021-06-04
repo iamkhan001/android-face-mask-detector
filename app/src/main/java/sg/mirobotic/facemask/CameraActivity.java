@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
@@ -192,12 +193,7 @@ public abstract class CameraActivity extends AppCompatActivity
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
 
-        btnSwitchCam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSwitchCamClick();
-            }
-        });
+        btnSwitchCam.setOnClickListener(v -> onSwitchCamClick());
 
     }
 
@@ -264,8 +260,9 @@ public abstract class CameraActivity extends AppCompatActivity
                 rgbBytes = new int[previewWidth * previewHeight];
                 int rotation = 90;
                 if (useFacing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    rotation = 270;
+                    rotation = 0;
                 }
+                Log.e("Camera","Rotation > "+rotation);
                 onPreviewSizeChosen(new Size(previewSize.width, previewSize.height), rotation);
             }
         } catch (final Exception e) {
