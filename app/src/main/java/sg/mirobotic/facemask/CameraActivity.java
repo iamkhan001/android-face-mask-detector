@@ -259,9 +259,9 @@ public abstract class CameraActivity extends AppCompatActivity
                 previewWidth = previewSize.width;
                 rgbBytes = new int[previewWidth * previewHeight];
                 int rotation = 90;
-                if (useFacing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    rotation = 0;
-                }
+//                if (useFacing == CameraCharacteristics.LENS_FACING_FRONT) {
+//                    rotation = 0;
+//                }
                 Log.e("Camera","Rotation > "+rotation);
                 onPreviewSizeChosen(new Size(previewSize.width, previewSize.height), rotation);
             }
