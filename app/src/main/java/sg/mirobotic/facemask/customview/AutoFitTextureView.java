@@ -75,6 +75,6 @@ public class AutoFitTextureView extends TextureView {
     }
 
     Log.e("Camera", "ratio > "+ratioWidth+" "+ratioHeight+" > "+width+" "+height);
-    setRotation(270);
+    setRotation(90);
   }
 }
