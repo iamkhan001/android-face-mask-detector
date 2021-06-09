@@ -1,6 +1,8 @@
 package sg.mirobotic.facemask
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -57,8 +59,9 @@ class MainActivity : AppCompatActivity() {
         timeOutUtils.resetDisconnectTimer()
         robot = Robot.getInstance()
 
-        robot?.tiltAngle(100)
-
+        Handler(Looper.getMainLooper()).postDelayed({
+            robot?.tiltAngle(23)
+        }, 3000)
 
     }
 
