@@ -50,6 +50,28 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnTiltAngle"
+            android:src="@android:drawable/arrow_up_float"
+            android:text="Tilt Angle"
+            android:layout_width="100dp"
+            android:layout_height="40dp"/>
+
+        <Button
+            android:id="@+id/btnTiltBy"
+            android:src="@android:drawable/arrow_up_float"
+            android:text="Tilt By"
+            android:layout_width="100dp"
+            android:layout_height="40dp"/>
+
+    </LinearLayout>
+
     <include
         android:id="@+id/bottom_sheet_layout"
         layout="@layout/tfe_od_layout_bottom_sheet" />

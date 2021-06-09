@@ -54,6 +54,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.robotemi.sdk.Robot;
 
 
 import java.nio.ByteBuffer;
@@ -137,6 +138,16 @@ public abstract class CameraActivity extends AppCompatActivity
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
 
         btnSwitchCam = findViewById(R.id.fab);
+
+        Robot robot = Robot.getInstance();
+
+        findViewById(R.id.btnTiltAngle).setOnClickListener(v -> {
+            robot.tiltAngle(23);
+        });
+
+        findViewById(R.id.btnTiltBy).setOnClickListener(v -> {
+            robot.tiltBy(40);
+        });
 
         ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(

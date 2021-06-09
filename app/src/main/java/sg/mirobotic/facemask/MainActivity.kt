@@ -59,9 +59,6 @@ class MainActivity : AppCompatActivity() {
         timeOutUtils.resetDisconnectTimer()
         robot = Robot.getInstance()
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            robot?.tiltAngle(23)
-        }, 3000)
 
     }
 
