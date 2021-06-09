@@ -1,11 +1,10 @@
 package sg.mirobotic.facemask
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.robotemi.sdk.Robot
 import sg.mirobotic.facemask.TimeOutUtils.OnTimeoutListener
 import sg.mirobotic.robot.voice.RobotSpeech
 import sg.mirobotic.robot.voice.RobotSpeech.Companion.getInstance
@@ -15,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private var robotSpeech: RobotSpeech? = null
 
     private var isSpeaking = false
+    private var robot: Robot? = null
 
     companion object {
         private const val TAG = "MainA"
@@ -55,8 +55,9 @@ class MainActivity : AppCompatActivity() {
 
 
         timeOutUtils.resetDisconnectTimer()
+        robot = Robot.getInstance()
 
-
+        robot?.tiltAngle(100)
 
 
     }

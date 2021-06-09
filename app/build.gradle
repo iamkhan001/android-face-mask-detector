@@ -41,6 +41,18 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+        maven { url "http://dl.bintray.com/webactive/maven"  }
+        maven {url 'https://csspeechstorage.blob.core.windows.net/maven/'}
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 
@@ -58,6 +70,9 @@ dependencies {
 
     implementation('org.tensorflow:tensorflow-lite:0.0.0-nightly') { changing = true }
     implementation 'com.google.mlkit:face-detection:16.0.0'
+
+    implementation(name:'temi_sdk', ext:'aar')
+
     implementation project(path: ':robot')
 
     testImplementation 'junit:junit:4.+'
