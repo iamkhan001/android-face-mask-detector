@@ -140,6 +140,7 @@ public abstract class CameraActivity extends AppCompatActivity
         btnSwitchCam = findViewById(R.id.fab);
 
         Robot robot = Robot.getInstance();
+        robot.tiltAngle(23);
 
         findViewById(R.id.btnTiltAngle).setOnClickListener(v -> {
             robot.tiltAngle(23);
