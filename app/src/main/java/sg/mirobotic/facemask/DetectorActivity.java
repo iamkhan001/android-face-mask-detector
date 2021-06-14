@@ -37,6 +37,9 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
@@ -171,9 +174,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     .build();
 
 
-    FaceDetector detector = FaceDetection.getClient(options);
 
-    faceDetector = detector;
+    faceDetector = FaceDetection.getClient(options);
 
     robotSpeech = RobotSpeech.getInstance(this, onSpeakListener);
     //checkWritePermission();

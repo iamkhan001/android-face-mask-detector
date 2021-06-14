@@ -26,6 +26,10 @@
             android:name="com.robotemi.sdk.metadata.SKILL"
             android:value="@string/app_name" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9639189992716853~7057465736"/>
+
     </application>
 
 </manifest>

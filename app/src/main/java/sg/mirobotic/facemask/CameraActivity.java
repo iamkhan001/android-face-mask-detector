@@ -52,10 +52,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.robotemi.sdk.Robot;
 
+
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
@@ -207,6 +215,44 @@ public abstract class CameraActivity extends AppCompatActivity
 
         btnSwitchCam.setOnClickListener(v -> onSwitchCamClick());
 
+        MobileAds.initialize(this, initializationStatus -> {
+            Log.e("ads","initialize: "+initializationStatus.getAdapterStatusMap());
+            initAds();
+        });
+
+    }
+
+    private void initAds() {
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.d("ads","onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NotNull LoadAdError adError) {
+                Log.d("ads","onAdFailedToLoad: "+adError.getMessage());
+            }
+
+            @Override
+            public void onAdOpened() {
+                Log.d("ads","onAdOpened");
+            }
+
+            @Override
+            public void onAdClicked() {
+                Log.d("ads","onAdClicked");
+            }
+
+            @Override
+            public void onAdClosed() {
+                Log.d("ads","onAdClosed");
+            }
+        });
     }
 
     private void onSwitchCamClick() {
