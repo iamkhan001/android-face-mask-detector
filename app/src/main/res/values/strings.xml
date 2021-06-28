@@ -4,5 +4,6 @@
     <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
     <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
     <string name="ad_unit_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_unit_live">ca-app-pub-9639189992716853/7987404027</string>
 
 </resources>
