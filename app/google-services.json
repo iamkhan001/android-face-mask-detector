@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "611998885299",
+    "firebase_url": "https://mirobotic-344be.firebaseio.com",
+    "project_id": "mirobotic-344be",
+    "storage_bucket": "mirobotic-344be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611998885299:android:0ffaa0e1e68cbd46aa57c6",
+        "android_client_info": {
+          "package_name": "sg.mirobotic.facemask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611998885299-1lkpv5uqh27emm89733nek0odgnn9j4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcRBTGKQlSR6A7cLgsan0xBbKACbzc_to"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611998885299-1lkpv5uqh27emm89733nek0odgnn9j4s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
