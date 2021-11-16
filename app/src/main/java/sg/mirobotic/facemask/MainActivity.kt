@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
 
         robotSpeech = getInstance(this, onSpeakListener)
 
-
         timeOutUtils.resetDisconnectTimer()
         robot = Robot.getInstance()
 
